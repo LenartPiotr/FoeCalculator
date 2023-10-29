@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <Button
+        android:id="@+id/btExit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10px"
+        android:layout_marginVertical="10px"
+        android:text="Exit"/>
+
+    <EditText
+        android:id="@+id/inputValue"
+        android:textAlignment="center"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10px"
+        android:layout_marginVertical="10px"/>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/outFlexBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:flexDirection="column"
+        app:alignItems="center"
+        app:justifyContent="flex_start">
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+</LinearLayout>
