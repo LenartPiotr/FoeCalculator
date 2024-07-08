@@ -10,11 +10,13 @@ import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,6 +67,7 @@ public class FloatingWindow extends Service {
         } else {
             values = new float[] { 1.9f };
         }
+        updateHeight();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -106,6 +109,8 @@ public class FloatingWindow extends Service {
 
         windowManager.addView(floatView, floatWindowLayoutParams);
 
+        updateHeight();
+
         floatView.setOnTouchListener(new View.OnTouchListener() {
             final WindowManager.LayoutParams floatWindowLayoutUpdateParam = floatWindowLayoutParams;
             double x;
@@ -139,8 +144,17 @@ public class FloatingWindow extends Service {
         input.setOnTouchListener((v, event) -> {
             input.setCursorVisible(true);
             WindowManager.LayoutParams floatWindowLayoutParamUpdateFlag = floatWindowLayoutParams;
-            floatWindowLayoutParamUpdateFlag.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+            floatWindowLayoutParamUpdateFlag.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
             windowManager.updateViewLayout(floatView, floatWindowLayoutParamUpdateFlag);
+            return false;
+        });
+
+        input.setOnEditorActionListener((view, actionId, event) -> {
+            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                WindowManager.LayoutParams floatWindowLayoutParamUpdateFlag = floatWindowLayoutParams;
+                floatWindowLayoutParamUpdateFlag.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                windowManager.updateViewLayout(floatView, floatWindowLayoutParamUpdateFlag);
+            }
             return false;
         });
 
@@ -156,13 +170,19 @@ public class FloatingWindow extends Service {
         });
     }
 
+    void updateHeight() {
+        if (floatWindowLayoutParams == null || windowManager == null || values == null) return;
+        floatWindowLayoutParams.height = 400 + values.length * 50;
+        windowManager.updateViewLayout(floatView, floatWindowLayoutParams);
+    }
+
     @SuppressLint("SetTextI18n")
     void calculate(int number) {
         flexboxLayout.removeAllViews();
         for (float value : values) {
             float result = Math.round(number * value);
             TextView textView = new TextView(this);
-            textView.setText(value + " = " + result);
+            textView.setText(value + " = " + (int)result);
             flexboxLayout.addView(textView);
         }
     }
